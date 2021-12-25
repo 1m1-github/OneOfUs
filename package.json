@@ -1,0 +1,25 @@
+{
+  "name": "oneofus",
+  "version": "0.1.0",
+  "description": "discord bot to find the one that is different",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/2i2i/OneOfUs.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/2i2i/OneOfUs/issues"
+  },
+  "homepage": "https://github.com/2i2i/OneOfUs#readme",
+  "dependencies": {
+    "discord.js": "^13.4.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.5.0"
+  }
+}
