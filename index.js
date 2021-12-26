@@ -54,7 +54,7 @@ client.on('interactionCreate', async interaction => {
       try {
         guildMember.roles.remove(theOneRoleID);
       } catch (_) { }
-      guildMember.roles.add(aliveRoleID)
+      guildMember.roles.add(aliveRoleID);
 
       const id = guildMember.id;
       await keyv.set(id, {
@@ -71,13 +71,14 @@ client.on('interactionCreate', async interaction => {
     await keyv.set('TheOne', theOneId);
 
     const theOneChannel = await interaction.guild.channels.create('theone', { type: 'text' });
-    await keyv.set('TheOneChannel', theOneChannel.id);
     console.log('theOneId', theOneId);
     await theOneChannel.permissionOverwrites.edit(interaction.guild.roles.everyone, { VIEW_CHANNEL: false });
     await theOneChannel.permissionOverwrites.edit(theOneId, { VIEW_CHANNEL: true });
-    theOneChannel.members.get(theOneId).send(`Game: ${name}: You are TheOne - Go to the #theone channel and /kill <someone>`);
+    const theOne = await interaction.guild.members.fetch(theOneId);
+    await theOne.send(`Game: ${name}: You are TheOne - Go to the #theone channel and /kill <someone>`);
+    await keyv.set('TheOneChannel', theOneChannel.id);
 
-    return interaction.reply('TheOne chosen');
+    return interaction.reply(`game '${name}' started \n TheOne, you have received a DM`);
   } else if (commandName === 'kill') {
 
     const part = await keyv.get('part');
@@ -92,6 +93,9 @@ client.on('interactionCreate', async interaction => {
     if (userId !== theOneId) return interaction.reply(`You are not the killer.`);
 
     const victimUser = interaction.options.getUser('user');
+    const victimGuildUser = await interaction.guild.members.fetch(victimUser.id);
+    await victimGuildUser.roles.remove(aliveRoleID);
+    await victimGuildUser.roles.add(deadRoleID);
     const victimDbUser = await keyv.get(`${victimUser.id}`);
     if (victimDbUser === undefined) return interaction.reply(`${victimUser.username} is not in the game. They need to join the voice channel 'game-chat' and wait for the next game to start.`);
     if (victimDbUser.status === 'dead') return interaction.reply(`That goes too far - ${victimUser.username} is already dead! - Try someone else.`);
@@ -113,6 +117,7 @@ client.on('interactionCreate', async interaction => {
     const userAId = interaction.user.id;
     const userB = interaction.options.getUser('user');
     const userBId = userB.id;
+    if (userAId === userBId) return interaction.reply(`Cannot vote for yourself.`);
     const dbUserA = await keyv.get(userAId);
     const dbUserB = await keyv.get(userBId);
 
@@ -132,7 +137,7 @@ client.on('interactionCreate', async interaction => {
     if (name === undefined) return interaction.reply('run /new-game to start a game');
 
     const a = [];
-    a.push(`You are in game ${name}`);
+    a.push(`You are in game '${name}'`);
 
     const round = await keyv.get('round');
     a.push(`round: ${round}`);
@@ -163,15 +168,15 @@ client.on('interactionCreate', async interaction => {
       }
       console.log('votes=', votes);
 
-      const votee = user.vote === null ? '<nobody yet>' : (await keyv.get(user.vote)).name;
-      a.push(`${user.name} is ${user.status} and has voted for ${votee}.`);
+      if (user.vote === null) a.push(`${user.name} is ${user.status} and has NOT voted.`);
+      else a.push(`${user.name} is ${user.status} and has voted.`);
     }
 
-    a.push(`\n`);
-    for (const id of Object.keys(votes)) {
-      const user = await keyv.get(id);
-      a.push(`${user.name} has ${votes[id]} votes.`);
-    }
+    // a.push(`\n`);
+    // for (const id of Object.keys(votes)) {
+    //   const user = await keyv.get(id);
+    //   a.push(`${user.name} has ${votes[id]} votes.`);
+    // }
 
     const s = a.join('\n');
     return interaction.reply(s);
@@ -239,7 +244,7 @@ client.on('interactionCreate', async interaction => {
       const rounds = await keyv.get('round');
       if (theOneId === maxVotesId) {
         a.push(`\n`);
-        a.push(`You got the one!!!!! It was ${theOne.name}`);
+        a.push(`You got TheOne!!!!! It was ${theOne.name}`);
         a.push(`It took you ${rounds} rounds`);
         a.push(`--- game end ---`);
         await keyv.set('part', 'done');
@@ -248,6 +253,7 @@ client.on('interactionCreate', async interaction => {
         if (theOneTextChatId !== undefined) {
           const theOneTextChat = await client.channels.fetch(theOneTextChatId);
           await theOneTextChat.delete();
+          await keyv.clear();
         }
 
       } else if (numAlive < 4) {
@@ -260,6 +266,7 @@ client.on('interactionCreate', async interaction => {
         if (theOneTextChatId !== undefined) {
           const theOneTextChat = await client.channels.fetch(theOneTextChatId);
           await theOneTextChat.delete();
+          await keyv.clear();
         }
       } else {
         const newRound = rounds + 1;
