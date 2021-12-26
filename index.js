@@ -93,6 +93,7 @@ client.on('interactionCreate', async interaction => {
     if (userId !== theOneId) return interaction.reply(`You are not the killer.`);
 
     const victimUser = interaction.options.getUser('user');
+    if (userId === victimUser.id) return interaction.reply(`No suicides!`);
     const victimGuildUser = await interaction.guild.members.fetch(victimUser.id);
     await victimGuildUser.roles.remove(aliveRoleID);
     await victimGuildUser.roles.add(deadRoleID);
