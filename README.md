@@ -49,10 +49,11 @@ If there is demand, we could run a server so you only need to add the bot.
 Donations
 ======
 This bot was created by a family to have fun. If you like it, consider donating here:
-BTC: 1Q9PZWrxAQP6fM2UgRr5Rgfr1wej5DRevi
-ETH: 0xEF0533F730aD9fD82d6dC6a55ffE735F1fFc9a41
-ALGO: 7C3OBCJ2I2X5B5TZ74NQOUDMZIRG5B5T75B3RA3YZTZW2JQVZFBNPK37AM
-DOGE: DHVHs1MMqD4tAMRYWyvpsXJzuMHKn51xZe
-XMR: 44YBNn5PjVTXRwH8ACqRAJRBiQJhEjdKeMF8xAET9aWzBnErTLV3iXkJobMYqgpFg68egyRPWXoHaABxDh9WyJ431np5eGt
-ADA: addr1qxq80gjkp4aum09v4yvlnygw6zkae8vty7jp05fu7n2nqmedhuw0jxacggkm3sy4gz2sx6lj67zxvqm60hfq3hh29m0q999evk
-BAT: 0xEF0533F730aD9fD82d6dC6a55ffE735F1fFc9a41
+
+BTC: 1Q9PZWrxAQP6fM2UgRr5Rgfr1wej5DRevi  
+ETH: 0xEF0533F730aD9fD82d6dC6a55ffE735F1fFc9a41  
+ALGO: 7C3OBCJ2I2X5B5TZ74NQOUDMZIRG5B5T75B3RA3YZTZW2JQVZFBNPK37AM  
+DOGE: DHVHs1MMqD4tAMRYWyvpsXJzuMHKn51xZe  
+XMR: 44YBNn5PjVTXRwH8ACqRAJRBiQJhEjdKeMF8xAET9aWzBnErTLV3iXkJobMYqgpFg68egyRPWXoHaABxDh9WyJ431np5eGt  
+ADA: addr1qxq80gjkp4aum09v4yvlnygw6zkae8vty7jp05fu7n2nqmedhuw0jxacggkm3sy4gz2sx6lj67zxvqm60hfq3hh29m0q999evk  
+BAT: 0xEF0533F730aD9fD82d6dC6a55ffE735F1fFc9a41  
