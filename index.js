@@ -1,3 +1,5 @@
+// node index.js
+
 const Keyv = require('keyv');
 const keyv = new Keyv(); // for in-memory storage
 
@@ -24,7 +26,14 @@ client.on('interactionCreate', async interaction => {
 
   const { commandName } = interaction;
 
-  if (commandName === 'new-game') {
+  if (commandName === 'help') {
+    return interaction.reply(`
+    /new-game: starts a new game
+    /tally: shows status of current game
+    /kill: for TheOne to choose their victim
+    /vote: to vote on a suss
+    /voting-done: op to advance game`);
+  } else if (commandName === 'new-game') {
 
     const theOneTextChatId = await keyv.get('TheOneChannel');
     if (theOneTextChatId !== undefined) {
@@ -35,6 +44,7 @@ client.on('interactionCreate', async interaction => {
     if (!interaction.member.roles.cache.has(operatorRoleID)) return interaction.reply(`Only an Operator can run this command.`);
 
     const channelGameVoice = await client.channels.fetch(gameVoiceChatId);
+    console.log('channelGameVoice.members.size', channelGameVoice.members.size);
     if (channelGameVoice.members.size < 4) return interaction.reply(`you need at least 4 players in the voice channel 'game chat'`);
 
     const name = interaction.options.getString('name');
@@ -71,7 +81,7 @@ client.on('interactionCreate', async interaction => {
     await keyv.set('TheOne', theOneId);
 
     const theOneChannel = await interaction.guild.channels.create('theone', { type: 'text' });
-    console.log('theOneId', theOneId);
+    // console.log('theOneId', theOneId);
     await theOneChannel.permissionOverwrites.edit(interaction.guild.roles.everyone, { VIEW_CHANNEL: false });
     await theOneChannel.permissionOverwrites.edit(theOneId, { VIEW_CHANNEL: true });
     const theOne = await interaction.guild.members.fetch(theOneId);
@@ -169,8 +179,13 @@ client.on('interactionCreate', async interaction => {
       }
       console.log('votes=', votes);
 
-      if (user.vote === null) a.push(`${user.name} is ${user.status} and has NOT voted.`);
-      else a.push(`${user.name} is ${user.status} and has voted.`);
+      if (user.status == 'alive') {
+        if (user.vote === null) a.push(`${user.name} is alive and has NOT voted.`);
+        else a.push(`${user.name} is alive and has voted.`);
+      }
+      else {
+        a.push(`${user.name} is DEAD.`);
+      }
     }
 
     // a.push(`\n`);
@@ -239,6 +254,9 @@ client.on('interactionCreate', async interaction => {
       const maxVoteUser = await keyv.get(maxVotesId);
       a.push(`Voting out ${maxVoteUser.name}`);
       maxVoteUser.status = 'dead';
+      const maxVotesUser = await interaction.guild.members.fetch(maxVotesId);
+      await maxVotesUser.roles.add(deadRoleID);
+      await maxVotesUser.roles.remove(aliveRoleID);
       await keyv.set(maxVotesId, maxVoteUser);
       const theOneId = await keyv.get('TheOne');
       const theOne = await keyv.get(theOneId);
@@ -274,6 +292,15 @@ client.on('interactionCreate', async interaction => {
         await keyv.set('round', newRound);
         await keyv.set('part', 'night');
       }
+    }
+
+    for (const id of ids) {
+      try {
+      const user = await keyv.get(id);
+      user.vote = null;
+      await keyv.set(id, user);
+      }
+      catch (e){}
     }
 
     const s = a.join('\n');

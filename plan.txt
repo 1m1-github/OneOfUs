@@ -1,0 +1,23 @@
+- bot gets list of players = users in voice channel and set all to role 'alive'
+- cmd for bot to choose imposter randomly from the list of players (ideally users in voice channel)
+- bot gives imposter access to imposter text channel
+- bot sends dm to imposter
+- bot waits to receive dm from imposter with the name of the victim (has to be on list of alive players)
+- bot waits to get /kill cmd from imposter on imposter channel
+- bot announces victim in shared chat
+- bot sets victim role to 'dead'
+- if # 'alive' players < 3, announce 'game over - imposter wins'
+- bot creates poll using reactions amongst 'alive' players
+- bot accepts /vote @user messages to set vote
+- /tally to show current poll result
+- bot waits for command /voted from op
+- bot set poll winner to 'dead'
+- if poll winner == imposter, announce 'game over - imposter loses'
+- else if # 'alive' players < 4, announce 'game over - imposter wins'
+- else loop from line 4
+
+/new-game
+/kill
+/vote
+/tally
+/voting-done
